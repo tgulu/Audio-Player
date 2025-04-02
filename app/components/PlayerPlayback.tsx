@@ -3,6 +3,7 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { PlaybackBar } from "./PlaybackBar";
 import styles from "./PlayerPlayback.module.css";
+import SpeedDropDown from "./SpeedDropDown";
 
 type PlayerPlaybackProps = {
   context: AudioContext;
@@ -29,7 +30,8 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     positionMilliseconds: 0,
   });
 
-  const [playbackRate, setPlaybackRate] = useState<number>(1); // Default: normal speed
+  const [playbackRate, setPlaybackRate] = useState<number>(0); // Default: normal speed
+
 
 
   useEffect(() => {
@@ -51,7 +53,9 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     }
 
     const source = context.createBufferSource();
+
     source.buffer = audioBuffer;
+    source.playbackRate.value = playbackRate;
 
     const effectiveStartTimeMilliseconds =
       Date.now() - playbackState.positionMilliseconds;
@@ -64,7 +68,7 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
       effectiveStartTimeMilliseconds,
       source,
     });
-  }, [context, audioBuffer, playbackState]);
+  }, [context, audioBuffer, playbackState, playbackRate]);
 
   const stopAndGoTo = useCallback(
     (goToPositionMillis?: number) => {
@@ -108,6 +112,10 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
           <button onClick={play}>Play</button>
         )}
         <button onClick={stop}>Stop</button>
+        <SpeedDropDown
+          playbackRate={playbackRate}
+          onSpeedChange={setPlaybackRate}
+        />
       </div>
 
       <PlaybackBar
