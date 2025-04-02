@@ -30,7 +30,7 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     positionMilliseconds: 0,
   });
 
-  const [playbackRate, setPlaybackRate] = useState<number>(0); // Default: normal speed
+  const [playbackRate, setPlaybackRate] = useState<number>(1); // Default: normal speed
 
 
 
