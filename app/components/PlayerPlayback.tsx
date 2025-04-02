@@ -29,6 +29,9 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     positionMilliseconds: 0,
   });
 
+  const [playbackRate, setPlaybackRate] = useState<number>(1); // Default: normal speed
+
+
   useEffect(() => {
     // Whenever new audio is loaded, reset the playback state
     setPlaybackState({
