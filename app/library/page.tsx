@@ -25,6 +25,24 @@ export default function LibraryPage() {
       });
   }, []);
 
+  // Handle file deletion
+  const handleDelete = useCallback(async (fileId: string) => {
+    try {
+      const response = await fetch("/api/user-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ operation: "delete", fileId }),
+      });
+
+      if (!response.ok) throw new Error("Delete failed");
+
+      const data = await response.json();
+      setFiles(data.library || []);
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
+  }, []);
+
   // Handle file upload
   const handleUpload = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
