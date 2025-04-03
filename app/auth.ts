@@ -18,9 +18,8 @@ export const generateTokenForNewUser = () => {
   return uuidv4();
 };
 
-export const getUserIdFromToken = (token: string) => {
-  // In a real application, you would decode the token and verify it.
-  // But for this challenge, we assume the token is valid
-  // and is actually the same as the user id
+export function getUserIdFromToken(token: string): string {
+  // For this example, we'll just use the token as the user ID
+  // In a real app, you would validate the JWT and extract the user ID
   return token;
-};
+}
