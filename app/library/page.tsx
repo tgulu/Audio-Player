@@ -56,6 +56,37 @@ export default function LibraryPage() {
     []
   );
 
+  // Handle file rename
+  const handleRename = useCallback(
+    async (fileId: string) => {
+      if (!editingName.trim()) {
+        setEditingId(null);
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/user-data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            operation: "rename",
+            fileId,
+            newName: editingName.trim(),
+          }),
+        });
+
+        if (!response.ok) throw new Error("Rename failed");
+
+        const data = await response.json();
+        setFiles(data.library || []);
+        setEditingId(null);
+      } catch (error) {
+        console.error("Rename error:", error);
+      }
+    },
+    [editingName]
+  );
+
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
