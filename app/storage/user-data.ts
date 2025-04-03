@@ -19,12 +19,24 @@ export const USER_DATA = z.object({
    * This is just used as an example for how we store data
    */
   firstPageLoad: z.string().nullable(),
+
+  /**
+   * User's audio playback settings
+   */
+  audioPlaybackSettings: z.object({
+    filterType: z.enum(["none", "highpass", "lowpass"]),
+    filterFrequency: z.number().min(100).max(10000),
+  }),
 });
 
 export type UserData = z.infer<typeof USER_DATA>;
 
 const DEFAULT_DATA: UserData = {
   firstPageLoad: null,
+  audioPlaybackSettings: {
+    filterType: "none",
+    filterFrequency: 1000,
+  },
 };
 
 export const getUserId = async () => {
@@ -57,7 +69,7 @@ export const getDataForCurrentUser = async () => {
 };
 
 export const updateDataForCurrentUser = async (
-  update: (current: UserData) => UserData | Promise<UserData>,
+  update: (current: UserData) => UserData | Promise<UserData>
 ): Promise<UserData> => {
   const current = await getDataForCurrentUser();
   const userId = await getUserId();
