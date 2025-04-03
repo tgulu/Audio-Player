@@ -7,11 +7,12 @@ type SpeedDropDownProps = {
 };
 
 const SPEED_OPTIONS = [
+    { value: 0.5, label: "0.5x" },
     { value: 1, label: "1x" },
     { value: 2, label: "2x" },
 ];
 
-export default function SpeedDropDown({ playbackRate, onSpeedChange }: SpeedDropDownProps) {
+export default function SpeedDropDown({ playbackRate = 1, onSpeedChange }: SpeedDropDownProps) {
     return (
         <div>
             <select value={playbackRate} onChange={(e) => onSpeedChange(Number(e.target.value))}>
