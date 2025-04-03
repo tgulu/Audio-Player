@@ -50,7 +50,7 @@ export default function Filter({
         label="High Pass"
         value={highPassValue}
         onChange={handleHighPassChange}
-        min={20}
+        min={100}
         max={10000}
         step={100}
         disabled={filterType !== "highpass"}
