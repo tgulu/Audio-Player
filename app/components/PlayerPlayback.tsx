@@ -5,6 +5,8 @@ import { PlaybackBar } from "./PlaybackBar";
 import styles from "./PlayerPlayback.module.css";
 import SpeedDropDown from "./SpeedDropDown";
 import Filter from "./Filter";
+
+
 type PlayerPlaybackProps = {
   context: AudioContext;
   audioBuffer: AudioBuffer | null;
@@ -36,16 +38,24 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
   const [filterFrequency, setFilterFrequency] = useState<number>(1000);
 
 
+      // Whenever new audio is loaded, reset the playback state to beginning and stop any playing audio.
   useEffect(() => {
-    // Whenever new audio is loaded, reset the playback state
     setPlaybackState({
       state: "stopped",
       positionMilliseconds: 0,
     });
   }, [audioBuffer]);
 
+    // Add effect to handle speed changes during playback
+  useEffect(() => {
+    if (playbackState.state === "playing") {
+const currentPosition = Date.now() - playbackState.effectiveStartTimeMilliseconds;
+
+playbackState.source.stop()
+  }
 
 
+//Defines the play function using useCallback so it doesn't re-create unless dependencies change
   const play = useCallback(() => {
     if (!audioBuffer) {
       return;
@@ -56,6 +66,8 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
       return;
     }
 
+
+//Create a filter using Web Audio API. If a filter is selected, set its type and frequency.
     const filter = context.createBiquadFilter();
     if (filterType !== "none") {
       filter.type = filterType;
