@@ -43,6 +43,7 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
   });
 
   const [playbackRate, setPlaybackRate] = useState<number>(1);
+  ``;
   const [filterType, setFilterType] = useState<"none" | "highpass" | "lowpass">(
     "none"
   );
