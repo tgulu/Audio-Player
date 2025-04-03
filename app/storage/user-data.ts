@@ -7,6 +7,14 @@ import { z } from "zod";
  * We use `zod` so that we can validate the data we get from the file system,
  * and avoid causing type-errors.
  */
+const AudioFile = z.object({
+  id: z.string(),
+  name: z.string(),
+  originalName: z.string(),
+  uploadedAt: z.string(),
+  size: z.number(),
+});
+
 export const USER_DATA = z.object({
   /**
    * Track the date that the user first loaded the app.
@@ -24,9 +32,11 @@ export const USER_DATA = z.object({
     highpassFrequency: z.number().default(1000),
     lowpassFrequency: z.number().default(1000),
   }),
+  library: z.array(AudioFile).default([]),
 });
 
 export type UserData = z.infer<typeof USER_DATA>;
+export type AudioFile = z.infer<typeof AudioFile>;
 
 export const DEFAULT_DATA: UserData = {
   firstPageLoad: null,
@@ -36,6 +46,7 @@ export const DEFAULT_DATA: UserData = {
     highpassFrequency: 1000,
     lowpassFrequency: 1000,
   },
+  library: [],
 };
 
 // Client-side functions that use fetch
@@ -90,6 +101,65 @@ export const saveUserAudioSettings = async (settings: {
     return data;
   } catch (err) {
     console.error("Error saving settings:", err);
+    throw err;
+  }
+};
+
+// Library functions
+export const loadUserLibrary = async () => {
+  try {
+    const res = await fetch("/api/user-data", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    return data.library ?? DEFAULT_DATA.library;
+  } catch (err) {
+    console.error("Error loading library:", err);
+    return DEFAULT_DATA.library;
+  }
+};
+
+export const saveUserLibrary = async (operation: {
+  type: "add" | "rename" | "delete";
+  file?: File;
+  fileId?: string;
+  newName?: string;
+}) => {
+  try {
+    let formData;
+    if (operation.type === "add" && operation.file) {
+      formData = new FormData();
+      formData.append("file", operation.file);
+    }
+
+    const response = await fetch("/api/user-data", {
+      method: "POST",
+      headers:
+        operation.type !== "add"
+          ? {
+              "Content-Type": "application/json",
+            }
+          : undefined,
+      body:
+        operation.type === "add"
+          ? formData
+          : JSON.stringify({
+              operation: operation.type,
+              fileId: operation.fileId,
+              newName: operation.newName,
+            }),
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    return data.library;
+  } catch (err) {
+    console.error("Error updating library:", err);
     throw err;
   }
 };
