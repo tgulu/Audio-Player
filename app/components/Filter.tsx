@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "./Slider";
 
 type FilterProps = {
@@ -16,21 +16,28 @@ export default function Filter({
   frequency,
   onFrequencyChange,
 }: FilterProps) {
-  const [highPassValue, setHighPassValue] = useState(1000);
-  const [lowPassValue, setLowPassValue] = useState(50000);
+  const [highPassValue, setHighPassValue] = useState(frequency || 1000);
+  const [lowPassValue, setLowPassValue] = useState(frequency || 1000);
+
+  // Update local state when frequency prop changes
+  useEffect(() => {
+    if (frequency) {
+      if (filterType === "highpass") {
+        setHighPassValue(frequency);
+      } else if (filterType === "lowpass") {
+        setLowPassValue(frequency);
+      }
+    }
+  }, [frequency, filterType]);
 
   const handleHighPassChange = (value: number) => {
     setHighPassValue(value);
-    if (onFrequencyChange) {
-      onFrequencyChange(value);
-    }
+    onFrequencyChange?.(value);
   };
 
   const handleLowPassChange = (value: number) => {
     setLowPassValue(value);
-    if (onFrequencyChange) {
-      onFrequencyChange(value);
-    }
+    onFrequencyChange?.(value);
   };
 
   return (
@@ -44,7 +51,7 @@ export default function Filter({
         value={highPassValue}
         onChange={handleHighPassChange}
         min={20}
-        max={20000}
+        max={10000}
         step={100}
         disabled={filterType !== "highpass"}
       />
@@ -53,8 +60,8 @@ export default function Filter({
         label="Low Pass"
         value={lowPassValue}
         onChange={handleLowPassChange}
-        min={1000}
-        max={50000}
+        min={500}
+        max={20000}
         step={100}
         disabled={filterType !== "lowpass"}
       />
