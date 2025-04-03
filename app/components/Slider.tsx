@@ -21,5 +21,21 @@ export default function Slider({
   label,
   disabled = false,
 }: SliderProps) {
-  return <div></div>;
+  return (
+    <div>
+      <label htmlFor={`slider-${label}`}>
+        {label}: {value}Hz
+      </label>
+      <input
+        id={`slider-${label}`}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        disabled={disabled}
+      />
+    </div>
+  );
 }
