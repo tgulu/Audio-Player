@@ -73,6 +73,13 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
         effectiveStartTimeMilliseconds: Date.now() - currentPosition,
         source: newSource,
       });
+
+      // Schedule the old source to stop after a small buffer time
+      // This ensures a smooth transition between speeds
+      setTimeout(() => {
+        currentSource.stop();
+        currentSource.disconnect();
+      }, 50);
     }
   }, [playbackRate, context, audioBuffer]);
 
