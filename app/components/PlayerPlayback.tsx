@@ -10,10 +10,6 @@ import {
   saveUserAudioSettings,
 } from "../storage/user-data";
 
-const isBiquadFilterType = (type: string): type is BiquadFilterType => {
-  return type === "highpass" || type === "lowpass";
-};
-
 type PlayerPlaybackProps = {
   context: AudioContext;
   audioBuffer: AudioBuffer | null;
