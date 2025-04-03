@@ -45,6 +45,37 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     });
   }, [audioBuffer]);
 
+  // Effect to handle speed changes during playback
+  useEffect(() => {
+    // Only proceed if we're playing and have a valid source
+    if (playbackState.state === "playing" && playbackState.source) {
+      // Calculate the current position in the audio
+      const currentPosition =
+        Date.now() - playbackState.effectiveStartTimeMilliseconds;
+
+      // Store the current source for cleanup
+      const currentSource = playbackState.source;
+
+      // Create a new source with the updated speed
+      const newSource = context.createBufferSource();
+      newSource.buffer = audioBuffer;
+      newSource.playbackRate.value = playbackRate;
+
+      // Connect the new source to the destination
+      newSource.connect(context.destination);
+
+      // Start the new source from the current position
+      newSource.start(0, currentPosition / 1000);
+
+      // Update the playback state with the new source
+      setPlaybackState({
+        state: "playing",
+        effectiveStartTimeMilliseconds: Date.now() - currentPosition,
+        source: newSource,
+      });
+    }
+  }, [playbackRate, context, audioBuffer]);
+
   //Defines the play function using useCallback so it doesn't re-create unless dependencies change
   const play = useCallback(() => {
     if (!audioBuffer) {
