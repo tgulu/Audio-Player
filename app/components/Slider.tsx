@@ -27,6 +27,7 @@ export default function Slider({
         {label}: {value}Hz
       </label>
       <input
+        className=" gap: 1em"
         id={`slider-${label}`}
         type="range"
         min={min}
