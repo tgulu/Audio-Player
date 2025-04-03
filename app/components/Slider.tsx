@@ -23,11 +23,10 @@ export default function Slider({
 }: SliderProps) {
   return (
     <div>
-      <label htmlFor={`slider-${label}`}>
-        {label}: {value}Hz
+      <label style={{ marginRight: "20px" }} htmlFor={`slider-${label}`}>
+        {label}: {value}&nbsp;Hz
       </label>
       <input
-        className=" gap: 1em"
         id={`slider-${label}`}
         type="range"
         min={min}
