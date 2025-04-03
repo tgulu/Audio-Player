@@ -1,10 +1,10 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { PlaybackBar } from "./PlaybackBar";
 import styles from "./PlayerPlayback.module.css";
 import SpeedDropDown from "./SpeedDropDown";
-// import Filter from "./Filter";
+import Filter from "./Filter";
 
 type PlayerPlaybackProps = {
   context: AudioContext;
@@ -31,11 +31,13 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     positionMilliseconds: 0,
   });
 
-  const [playbackRate, setPlaybackRate] = useState<number>(1); // Default: normal speed
+  const [playbackRate, setPlaybackRate] = useState<number>(1);
+  const [filterType, setFilterType] = useState<"none" | "highpass" | "lowpass">(
+    "none"
+  );
+  const [filterFrequency, setFilterFrequency] = useState<number>(1000);
 
-  // Comment out filter state
-  // const [filterType, setFilterType] = useState<"none" | "highpass" | "lowpass">("none");
-  // const [filterFrequency, setFilterFrequency] = useState<number>(1000);
+  const filterNodeRef = useRef<BiquadFilterNode | null>(null);
 
   // Whenever new audio is loaded, reset the playback state to beginning and stop any playing audio.
   useEffect(() => {
@@ -45,62 +47,52 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     });
   }, [audioBuffer]);
 
-  // Effect to handle speed changes during playback
+  //Create a filter using Web Audio API. If a filter is selected, set its type and frequency.
+  const connectNodes = (source: AudioBufferSourceNode) => {
+    if (filterType !== "none") {
+      const filter = context.createBiquadFilter();
+      filter.type = filterType;
+      filter.frequency.value = filterFrequency;
+      filterNodeRef.current = filter;
+      source.connect(filter);
+      filter.connect(context.destination);
+    } else {
+      filterNodeRef.current = null;
+      source.connect(context.destination);
+    }
+  };
+
+  // Add effect to handle speed changes during playback
   useEffect(() => {
-    // Only proceed if we're playing and have a valid source
-    if (playbackState.state === "playing" && playbackState.source) {
-      // Calculate the current position in the audio
+    if (playbackState.state === "playing" && audioBuffer) {
       const currentPosition =
         Date.now() - playbackState.effectiveStartTimeMilliseconds;
 
-      // Store the current source for cleanup
-      const currentSource = playbackState.source;
-
-      // Create a new source with the updated speed
+      const oldSource = playbackState.source;
       const newSource = context.createBufferSource();
       newSource.buffer = audioBuffer;
       newSource.playbackRate.value = playbackRate;
 
-      // Connect the new source to the destination
-      newSource.connect(context.destination);
+      connectNodes(newSource);
 
-      // Start the new source from the current position
       newSource.start(0, currentPosition / 1000);
 
-      // Update the playback state with the new source
       setPlaybackState({
         state: "playing",
         effectiveStartTimeMilliseconds: Date.now() - currentPosition,
         source: newSource,
       });
 
-      // Schedule the old source to stop after a small buffer time
-      // This ensures a smooth transition between speeds
       setTimeout(() => {
-        currentSource.stop();
-        currentSource.disconnect();
+        oldSource.stop();
+        oldSource.disconnect();
       }, 50);
     }
-  }, [playbackRate, context, audioBuffer]);
+  }, [playbackRate]);
 
   //Defines the play function using useCallback so it doesn't re-create unless dependencies change
   const play = useCallback(() => {
-    if (!audioBuffer) {
-      return;
-    }
-
-    if (playbackState.state === "playing") {
-      // Already playing
-      return;
-    }
-
-    // Comment out filter code
-    // // Create a filter using Web Audio API. If a filter is selected, set its type and frequency.
-    // const filter = context.createBiquadFilter();
-    // if (filterType !== "none") {
-    //   filter.type = filterType;
-    //   filter.frequency.value = filterFrequency;
-    // }
+    if (!audioBuffer || playbackState.state === "playing") return;
 
     const source = context.createBufferSource();
     source.buffer = audioBuffer;
@@ -109,17 +101,8 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     const effectiveStartTimeMilliseconds =
       Date.now() - playbackState.positionMilliseconds;
 
-    // Comment out filter connection
-    // // Connect the audio nodes properly
-    // if (filterType !== "none") {
-    //   source.connect(filter);
-    //   filter.connect(context.destination);
-    // } else {
-    //   source.connect(context.destination);
-    // }
+    connectNodes(source);
 
-    // Simplified connection without filter
-    source.connect(context.destination);
     source.start(0, playbackState.positionMilliseconds / 1000);
 
     setPlaybackState({
@@ -132,15 +115,13 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     audioBuffer,
     playbackState,
     playbackRate,
-    // Remove filter dependencies
-    // filterType,
-    // filterFrequency,
+    filterType,
+    filterFrequency,
   ]);
 
   const stopAndGoTo = useCallback(
     (goToPositionMillis?: number) => {
       if (playbackState.state === "stopped") {
-        // Already paused, just seek to new position
         if (goToPositionMillis !== undefined) {
           setPlaybackState({
             state: "stopped",
@@ -149,13 +130,14 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
         }
         return;
       }
+
       const positionMilliseconds =
         goToPositionMillis ??
         Date.now() - playbackState.effectiveStartTimeMilliseconds;
 
-      // Stop the source and disconnect it
       playbackState.source.stop();
       playbackState.source.disconnect();
+      filterNodeRef.current?.disconnect();
 
       setPlaybackState({
         state: "stopped",
@@ -166,7 +148,6 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
   );
 
   const pause = useCallback(() => stopAndGoTo(), [stopAndGoTo]);
-
   const stop = useCallback(() => stopAndGoTo(0), [stopAndGoTo]);
 
   if (!audioBuffer) {
@@ -186,10 +167,13 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
           playbackRate={playbackRate}
           onSpeedChange={setPlaybackRate}
         />
-        {/* Comment out Filter component */}
-        {/* <Filter filterType={filterType} onFilterChange={setFilterType} /> */}
+        <Filter
+          filterType={filterType}
+          onFilterChange={setFilterType}
+          frequency={filterFrequency}
+          onFrequencyChange={setFilterFrequency}
+        />
       </div>
-
       <PlaybackBar
         state={playbackState}
         totalTimeMilliseconds={audioBuffer.duration * 1000}
