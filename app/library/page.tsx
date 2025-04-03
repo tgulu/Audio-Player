@@ -87,6 +87,12 @@ export default function LibraryPage() {
     [editingName]
   );
 
+  // Start editing a file name
+  const startEditing = useCallback((file: AudioFile) => {
+    setEditingId(file.id);
+    setEditingName(file.name);
+  }, []);
+
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
