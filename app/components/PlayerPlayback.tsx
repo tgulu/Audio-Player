@@ -6,6 +6,11 @@ import styles from "./PlayerPlayback.module.css";
 import SpeedDropDown from "./SpeedDropDown";
 import Filter from "./Filter";
 
+// Exclude "none" from filterType used for BiquadFilterNode
+const isBiquadFilterType = (type: string): type is BiquadFilterType => {
+  return type === "highpass" || type === "lowpass";
+};
+
 type PlayerPlaybackProps = {
   context: AudioContext;
   audioBuffer: AudioBuffer | null;
@@ -31,13 +36,15 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     positionMilliseconds: 0,
   });
 
-  const [playbackRate, setPlaybackRate] = useState<number>(1);
+  const [playbackRate, setPlaybackRate] = useState<number>(1); // Default: normal speed
   const [filterType, setFilterType] = useState<"none" | "highpass" | "lowpass">(
     "none"
   );
   const [filterFrequency, setFilterFrequency] = useState<number>(1000);
 
   const filterNodeRef = useRef<BiquadFilterNode | null>(null);
+  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
 
   // Whenever new audio is loaded, reset the playback state to beginning and stop any playing audio.
   useEffect(() => {
@@ -47,22 +54,31 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     });
   }, [audioBuffer]);
 
-  //Create a filter using Web Audio API. If a filter is selected, set its type and frequency.
+  // Create and connect audio nodes
   const connectNodes = (source: AudioBufferSourceNode) => {
-    if (filterType !== "none") {
+    sourceNodeRef.current = source;
+
+    const gainNode = context.createGain();
+    gainNodeRef.current = gainNode;
+
+    if (!filterNodeRef.current && isBiquadFilterType(filterType)) {
       const filter = context.createBiquadFilter();
       filter.type = filterType;
       filter.frequency.value = filterFrequency;
       filterNodeRef.current = filter;
-      source.connect(filter);
-      filter.connect(context.destination);
-    } else {
-      filterNodeRef.current = null;
-      source.connect(context.destination);
     }
+
+    if (filterNodeRef.current) {
+      source.connect(filterNodeRef.current);
+      filterNodeRef.current.connect(gainNode);
+    } else {
+      source.connect(gainNode);
+    }
+
+    gainNode.connect(context.destination);
   };
 
-  // Add effect to handle speed changes during playback
+  // Effect to handle speed changes during playback
   useEffect(() => {
     if (playbackState.state === "playing" && audioBuffer) {
       const currentPosition =
@@ -89,6 +105,23 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
       }, 50);
     }
   }, [playbackRate]);
+
+  // Effect to update filter settings live during playback
+  useEffect(() => {
+    if (filterNodeRef.current) {
+      if (filterType === "none") {
+        filterNodeRef.current.disconnect();
+        gainNodeRef.current?.disconnect();
+        sourceNodeRef.current?.connect(context.destination);
+      } else if (isBiquadFilterType(filterType)) {
+        filterNodeRef.current.type = filterType;
+        filterNodeRef.current.frequency.setValueAtTime(
+          filterFrequency,
+          context.currentTime
+        );
+      }
+    }
+  }, [filterType, filterFrequency]);
 
   //Defines the play function using useCallback so it doesn't re-create unless dependencies change
   const play = useCallback(() => {
@@ -119,6 +152,7 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     filterFrequency,
   ]);
 
+  //Stops playback and updates the playback position
   const stopAndGoTo = useCallback(
     (goToPositionMillis?: number) => {
       if (playbackState.state === "stopped") {
@@ -138,6 +172,7 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
       playbackState.source.stop();
       playbackState.source.disconnect();
       filterNodeRef.current?.disconnect();
+      gainNodeRef.current?.disconnect();
 
       setPlaybackState({
         state: "stopped",
