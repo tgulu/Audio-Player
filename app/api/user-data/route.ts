@@ -5,6 +5,13 @@ import {
 } from "../../storage/user-data-server";
 import { USER_DATA, UserData } from "../../storage/user-data";
 
+type AudioPlaybackSettings = {
+  playbackRate: number;
+  filterType: "none" | "highpass" | "lowpass";
+  highpassFrequency: number;
+  lowpassFrequency: number;
+};
+
 export async function GET() {
   console.log("GET /api/user-data - Fetching user data");
   try {
@@ -36,13 +43,33 @@ export async function POST(request: NextRequest) {
 
     // Update the user data with the provided data
     const updatedData = await updateDataForCurrentUser((current: UserData) => {
+      // Start with current settings, defaulting frequencies if they don't exist
+      const newSettings: AudioPlaybackSettings = {
+        ...current.audioPlaybackSettings,
+        highpassFrequency:
+          current.audioPlaybackSettings?.highpassFrequency || 1000,
+        lowpassFrequency:
+          current.audioPlaybackSettings?.lowpassFrequency || 1000,
+      };
+
+      // Only update properties that are explicitly provided in the request
+      const updates =
+        body.audioPlaybackSettings as Partial<AudioPlaybackSettings>;
+      if (updates.playbackRate !== undefined)
+        newSettings.playbackRate = updates.playbackRate;
+      if (updates.filterType !== undefined)
+        newSettings.filterType = updates.filterType;
+      if (updates.highpassFrequency !== undefined)
+        newSettings.highpassFrequency = updates.highpassFrequency;
+      if (updates.lowpassFrequency !== undefined)
+        newSettings.lowpassFrequency = updates.lowpassFrequency;
+
       const newData = {
         ...current,
-        audioPlaybackSettings: {
-          ...current.audioPlaybackSettings,
-          ...body.audioPlaybackSettings,
-        },
+        audioPlaybackSettings: newSettings,
       };
+
+      console.log("Current settings:", current.audioPlaybackSettings);
       console.log("Preparing to update with:", newData);
       return newData;
     });
