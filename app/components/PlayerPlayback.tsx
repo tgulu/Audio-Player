@@ -4,6 +4,7 @@ import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { PlaybackBar } from "./PlaybackBar";
 import styles from "./PlayerPlayback.module.css";
 import SpeedDropDown from "./SpeedDropDown";
+import Link from "next/link";
 import Filter from "./Filter";
 import {
   loadUserAudioSettings,
@@ -223,7 +224,10 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     <>
       <div className={styles.controls}>
         {!audioBuffer ? (
-          <div>No Audio File Loaded</div>
+          <div>
+            <Link href="/">Back to Home</Link>
+            <h3>No Audio File Loaded</h3>
+          </div>
         ) : (
           <>
             {playbackState.state === "playing" ? (
