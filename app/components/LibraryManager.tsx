@@ -3,27 +3,44 @@
 import styles from "../page.module.css";
 import { useLibrary } from "../hooks/useLibrary";
 import { UploadSection } from "./UploadSection";
-
+import { FileList } from "./FileList";
 export default function LibraryManager() {
   const {
     files,
     isLoading,
-    uploadStatus,
-    handleDelete,
-    handleFileSelect,
-    handleRename,
     editingId,
     editingName,
+    uploadStatus,
+    setEditingName,
+    handleFileSelect,
+    handleDelete,
+    handleRename,
     startEditing,
+    cancelEditing,
   } = useLibrary();
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <div className="max-w-4xl mx-auto">
+          {/* <div>
+            <Link href="/" className={styles.primary}>
+              Back to Player
+            </Link>
+          </div> */}
+
           <UploadSection
             onFileSelect={handleFileSelect}
             uploadStatus={uploadStatus}
+          />
+          <FileList
+            files={files}
+            editingId={editingId}
+            editingName={editingName}
+            onEditNameChange={setEditingName}
+            onCancelEdit={cancelEditing}
+            onStartEditing={startEditing}
+            onDelete={handleDelete}
           />
         </div>
       </main>
