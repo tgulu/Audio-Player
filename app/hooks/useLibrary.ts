@@ -62,26 +62,34 @@ export function useLibrary() {
   }, []);
 
   // Handle file rename
-  const handleRename = useCallback(async (fileId: string, newName: string) => {
-    try {
-      const response = await fetch("/api/user-data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          operation: "rename",
-          fileId,
-          newName: newName.trim(),
-        }),
-      });
+  const handleRename = useCallback(
+    async (fileId: string, newName: string) => {
+      if (!editingName.trim()) {
+        setEditingId(null);
+        return;
+      }
 
-      if (!response.ok) throw new Error("Rename failed");
+      try {
+        const response = await fetch("/api/user-data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            operation: "rename",
+            fileId,
+            newName: newName.trim(),
+          }),
+        });
 
-      const data = await response.json();
-      setFiles(data.library || []);
-    } catch (error) {
-      console.error("Rename error:", error);
-    }
-  }, []);
+        if (!response.ok) throw new Error("Rename failed");
+
+        const data = await response.json();
+        setFiles(data.library || []);
+      } catch (error) {
+        console.error("Rename error:", error);
+      }
+    },
+    [editingName]
+  );
 
   // Start editing a file name
   const startEditing = useCallback((file: AudioFile) => {
@@ -97,13 +105,13 @@ export function useLibrary() {
   return {
     files,
     isLoading,
-    uploadStatus,
-    handleDelete,
-    handleFileSelect,
-    handleRename,
-    setUploadStatus,
     editingId,
     editingName,
+    uploadStatus,
+    setEditingName,
+    handleFileSelect,
+    handleDelete,
+    handleRename,
     startEditing,
     cancelEditing,
   };
