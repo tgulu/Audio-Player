@@ -1,11 +1,11 @@
+// app/components/PlayerPlayback.tsx
 "use client";
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
+import PlaybackControls from "./PlaybackControls";
+import AudioSettings from "./AudioSettings";
 import { PlaybackBar } from "./PlaybackBar";
 import styles from "./PlayerPlayback.module.css";
-import SpeedDropDown from "./SpeedDropDown";
-import Link from "next/link";
-import Filter from "./Filter";
 import {
   loadUserAudioSettings,
   saveUserAudioSettings,
@@ -27,13 +27,6 @@ type PlaybackState =
       source: AudioBufferSourceNode;
     };
 
-type AudioSettings = {
-  playbackRate: number;
-  filterType: "none" | "highpass" | "lowpass";
-  highpassFrequency: number;
-  lowpassFrequency: number;
-};
-
 export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
   context,
   audioBuffer,
@@ -44,7 +37,6 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
   });
 
   const [playbackRate, setPlaybackRate] = useState<number>(1);
-  ``;
   const [filterType, setFilterType] = useState<"none" | "highpass" | "lowpass">(
     "none"
   );
@@ -53,34 +45,19 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
 
   // Refs for audio nodes
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
-  const filterNodeRef = useRef<BiquadFilterNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-
-  // Settings management refs
-  const isInitialLoad = useRef(true);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const previousSettingsRef = useRef<AudioSettings>({
-    playbackRate: 1,
-    filterType: "none",
-    highpassFrequency: 1000,
-    lowpassFrequency: 1000,
-  });
 
   // Load user settings on initial render
   useEffect(() => {
     const loadSettings = async () => {
-      if (isInitialLoad.current) {
-        isInitialLoad.current = false;
-        try {
-          const settings = await loadUserAudioSettings();
-          setPlaybackRate(settings.playbackRate);
-          setFilterType(settings.filterType);
-          setHighpassFrequency(settings.highpassFrequency);
-          setLowpassFrequency(settings.lowpassFrequency);
-          previousSettingsRef.current = settings;
-        } catch (error) {
-          console.error("Failed to load user settings:", error);
-        }
+      try {
+        const settings = await loadUserAudioSettings();
+        setPlaybackRate(settings.playbackRate);
+        setFilterType(settings.filterType);
+        setHighpassFrequency(settings.highpassFrequency);
+        setLowpassFrequency(settings.lowpassFrequency);
+      } catch (error) {
+        console.error("Failed to load user settings:", error);
       }
     };
     loadSettings();
@@ -88,82 +65,14 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
 
   // Save settings when they change
   useEffect(() => {
-    const currentSettings: AudioSettings = {
+    const currentSettings = {
       playbackRate,
       filterType,
       highpassFrequency,
       lowpassFrequency,
     };
-
-    const hasChanged = Object.entries(currentSettings).some(
-      ([key, value]) =>
-        previousSettingsRef.current[key as keyof AudioSettings] !== value
-    );
-
-    if (!hasChanged) return;
-
-    previousSettingsRef.current = currentSettings;
-
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    // Set new timeout for debounced save
-    saveTimeoutRef.current = setTimeout(() => {
-      saveUserAudioSettings(currentSettings);
-    }, 500);
-
-    // Cleanup timeout on unmount
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
+    saveUserAudioSettings(currentSettings);
   }, [playbackRate, filterType, highpassFrequency, lowpassFrequency]);
-
-  // Initialize or update audio nodes
-  const setupAudioNodes = useCallback(() => {
-    // Create gain node if it doesn't exist
-    if (!gainNodeRef.current) {
-      gainNodeRef.current = context.createGain();
-      gainNodeRef.current.connect(context.destination);
-    }
-
-    // Create or update filter node
-    if (filterType !== "none") {
-      if (!filterNodeRef.current) {
-        filterNodeRef.current = context.createBiquadFilter();
-      }
-      filterNodeRef.current.type = filterType;
-      filterNodeRef.current.frequency.value =
-        filterType === "highpass" ? highpassFrequency : lowpassFrequency;
-    }
-
-    // Connect nodes based on filter type
-    if (sourceNodeRef.current) {
-      sourceNodeRef.current.disconnect();
-      if (filterType !== "none" && filterNodeRef.current) {
-        sourceNodeRef.current.connect(filterNodeRef.current);
-        filterNodeRef.current.connect(gainNodeRef.current!);
-      } else {
-        sourceNodeRef.current.connect(gainNodeRef.current!);
-      }
-    }
-  }, [context, filterType, highpassFrequency, lowpassFrequency]);
-
-  // Effect for handling filter changes
-  useEffect(() => {
-    if (playbackState.state === "playing") {
-      setupAudioNodes();
-    }
-  }, [filterType, highpassFrequency, lowpassFrequency, setupAudioNodes]);
-
-  // Handle playback rate changes
-  useEffect(() => {
-    if (playbackState.state === "playing") {
-      playbackState.source.playbackRate.value = playbackRate;
-    }
-  }, [playbackRate, playbackState]);
 
   const play = useCallback(() => {
     if (!audioBuffer || playbackState.state === "playing") return;
@@ -173,38 +82,24 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     source.playbackRate.value = playbackRate;
     sourceNodeRef.current = source;
 
-    setupAudioNodes();
-
     const startTime = context.currentTime;
-    const positionSeconds =
-      playbackState.state === "stopped"
-        ? playbackState.positionMilliseconds / 1000
-        : 0;
-    source.start(startTime, positionSeconds);
+    source.start(startTime);
 
     setPlaybackState({
       state: "playing",
-      effectiveStartTimeMilliseconds:
-        Date.now() -
-        (playbackState.state === "stopped"
-          ? playbackState.positionMilliseconds
-          : 0),
+      effectiveStartTimeMilliseconds: Date.now(),
       source,
     });
-  }, [audioBuffer, context, playbackRate, playbackState, setupAudioNodes]);
+  }, [audioBuffer, context, playbackRate, playbackState]);
 
   const pause = useCallback(() => {
     if (playbackState.state !== "playing") return;
-
-    const currentPositionMilliseconds =
-      Date.now() - playbackState.effectiveStartTimeMilliseconds;
-
     playbackState.source.stop();
     sourceNodeRef.current = null;
-
     setPlaybackState({
       state: "stopped",
-      positionMilliseconds: currentPositionMilliseconds,
+      positionMilliseconds:
+        Date.now() - playbackState.effectiveStartTimeMilliseconds,
     });
   }, [playbackState]);
 
@@ -213,7 +108,6 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
       playbackState.source.stop();
       sourceNodeRef.current = null;
     }
-
     setPlaybackState({
       state: "stopped",
       positionMilliseconds: 0,
@@ -224,33 +118,24 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
     <>
       <div className={styles.controls}>
         {!audioBuffer ? (
-          <div>
-            <Link href="/">Back to Home</Link>
-            <h3>No Audio File Loaded</h3>
-          </div>
+          <div>No Audio File Loaded</div>
         ) : (
           <>
-            {playbackState.state === "playing" ? (
-              <button onClick={pause}>Pause</button>
-            ) : (
-              <button onClick={play}>Play</button>
-            )}
-            <button onClick={stop}>Stop</button>
-            <SpeedDropDown
-              playbackRate={playbackRate}
-              onSpeedChange={setPlaybackRate}
+            <PlaybackControls
+              isPlaying={playbackState.state === "playing"}
+              onPlay={play}
+              onPause={pause}
+              onStop={stop}
             />
-            <Filter
+            <AudioSettings
+              playbackRate={playbackRate}
               filterType={filterType}
-              onFilterChange={setFilterType}
-              frequency={
-                filterType === "highpass" ? highpassFrequency : lowpassFrequency
-              }
-              onFrequencyChange={
-                filterType === "highpass"
-                  ? setHighpassFrequency
-                  : setLowpassFrequency
-              }
+              highpassFrequency={highpassFrequency}
+              lowpassFrequency={lowpassFrequency}
+              onPlaybackRateChange={setPlaybackRate}
+              onFilterTypeChange={setFilterType}
+              onHighpassFrequencyChange={setHighpassFrequency}
+              onLowpassFrequencyChange={setLowpassFrequency}
             />
           </>
         )}
