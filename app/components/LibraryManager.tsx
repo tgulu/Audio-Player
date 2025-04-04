@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AudioFile, loadUserLibrary } from "../storage/user-data";
 import Link from "next/link";
 import styles from "../page.module.css";
+import { FilePicker } from "./FilePicker";
 
 export default function LibraryPage() {
   const [files, setFiles] = useState<AudioFile[]>([]);
@@ -44,35 +45,29 @@ export default function LibraryPage() {
   }, []);
 
   // Handle file upload
-  const handleUpload = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
+  const handleFileSelect = useCallback(async (file: File) => {
+    setUploadStatus("Uploading...");
+    const formData = new FormData();
+    formData.append("file", file);
 
-      setUploadStatus("Uploading...");
-      const formData = new FormData();
-      formData.append("file", file);
+    try {
+      const response = await fetch("/api/user-data", {
+        method: "POST",
+        body: formData,
+      });
 
-      try {
-        const response = await fetch("/api/user-data", {
-          method: "POST",
-          body: formData,
-        });
+      if (!response.ok) throw new Error("Upload failed");
 
-        if (!response.ok) throw new Error("Upload failed");
-
-        const data = await response.json();
-        setFiles(data.library || []);
-        setUploadStatus("Upload complete!");
-        setTimeout(() => setUploadStatus(""), 2000);
-      } catch (error) {
-        console.error("Upload error:", error);
-        setUploadStatus("Upload failed");
-        setTimeout(() => setUploadStatus(""), 2000);
-      }
-    },
-    []
-  );
+      const data = await response.json();
+      setFiles(data.library || []);
+      setUploadStatus("Upload complete!");
+      setTimeout(() => setUploadStatus(""), 2000);
+    } catch (error) {
+      console.error("Upload error:", error);
+      setUploadStatus("Upload failed");
+      setTimeout(() => setUploadStatus(""), 2000);
+    }
+  }, []);
 
   // Handle file rename
   const handleRename = useCallback(
@@ -112,29 +107,24 @@ export default function LibraryPage() {
   }, []);
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Audio Library</h1>
-          <Link href="/">Back to Player</Link>
+    <div className={styles.page}>
+      <main className={styles.main}>
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-8 flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Audio Library</h1>
+            <Link href="/">Back to Player</Link>
+          </div>
+          <div className="mb-8">
+            <FilePicker onFileSelect={handleFileSelect} />
+            <span>Upload Audio File</span>
+            {uploadStatus && (
+              <p className="mt-2 text-center text-sm text-white">
+                {uploadStatus}
+              </p>
+            )}
+          </div>
         </div>
-        <div className="mb-8">
-          <label className="block px-4 py-2  text-white  text-center ">
-            Upload Audio File
-            <input
-              type="file"
-              accept="audio/*"
-              onChange={handleUpload}
-              className="hidden"
-            />
-          </label>
-          {uploadStatus && (
-            <p className="mt-2 text-center text-sm text-white">
-              {uploadStatus}
-            </p>
-          )}
-        </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
