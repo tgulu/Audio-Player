@@ -1,15 +1,12 @@
 // app/components/PlayerPlayback.tsx
 "use client";
 
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import PlaybackControls from "./PlaybackControls";
 import AudioSettings from "./AudioSettings";
 import { PlaybackBar } from "./PlaybackBar";
 import styles from "./PlayerPlayback.module.css";
-import {
-  loadUserAudioSettings,
-  saveUserAudioSettings,
-} from "../storage/user-data";
+import { useAudioSettings } from "../hooks/useAudioSettings";
 
 type PlayerPlaybackProps = {
   context: AudioContext;
@@ -31,55 +28,20 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
   context,
   audioBuffer,
 }) => {
+  const [settings, setSettings] = useAudioSettings();
   const [playbackState, setPlaybackState] = useState<PlaybackState>({
     state: "stopped",
     positionMilliseconds: 0,
   });
 
-  const [playbackRate, setPlaybackRate] = useState<number>(1);
-  const [filterType, setFilterType] = useState<"none" | "highpass" | "lowpass">(
-    "none"
-  );
-  const [highpassFrequency, setHighpassFrequency] = useState<number>(1000);
-  const [lowpassFrequency, setLowpassFrequency] = useState<number>(1000);
-
-  // Refs for audio nodes
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
-
-  // Load user settings on initial render
-  useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const settings = await loadUserAudioSettings();
-        setPlaybackRate(settings.playbackRate);
-        setFilterType(settings.filterType);
-        setHighpassFrequency(settings.highpassFrequency);
-        setLowpassFrequency(settings.lowpassFrequency);
-      } catch (error) {
-        console.error("Failed to load user settings:", error);
-      }
-    };
-    loadSettings();
-  }, []);
-
-  // Save settings when they change
-  useEffect(() => {
-    const currentSettings = {
-      playbackRate,
-      filterType,
-      highpassFrequency,
-      lowpassFrequency,
-    };
-    saveUserAudioSettings(currentSettings);
-  }, [playbackRate, filterType, highpassFrequency, lowpassFrequency]);
 
   const play = useCallback(() => {
     if (!audioBuffer || playbackState.state === "playing") return;
 
     const source = context.createBufferSource();
     source.buffer = audioBuffer;
-    source.playbackRate.value = playbackRate;
+    source.playbackRate.value = settings.playbackRate;
     sourceNodeRef.current = source;
 
     const startTime = context.currentTime;
@@ -90,7 +52,7 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
       effectiveStartTimeMilliseconds: Date.now(),
       source,
     });
-  }, [audioBuffer, context, playbackRate, playbackState]);
+  }, [audioBuffer, context, playbackState, settings]);
 
   const pause = useCallback(() => {
     if (playbackState.state !== "playing") return;
@@ -128,14 +90,22 @@ export const PlayerPlayback: FC<PlayerPlaybackProps> = ({
               onStop={stop}
             />
             <AudioSettings
-              playbackRate={playbackRate}
-              filterType={filterType}
-              highpassFrequency={highpassFrequency}
-              lowpassFrequency={lowpassFrequency}
-              onPlaybackRateChange={setPlaybackRate}
-              onFilterTypeChange={setFilterType}
-              onHighpassFrequencyChange={setHighpassFrequency}
-              onLowpassFrequencyChange={setLowpassFrequency}
+              playbackRate={settings.playbackRate}
+              filterType={settings.filterType}
+              highpassFrequency={settings.highpassFrequency}
+              lowpassFrequency={settings.lowpassFrequency}
+              onPlaybackRateChange={(rate) =>
+                setSettings({ ...settings, playbackRate: rate })
+              }
+              onFilterTypeChange={(type) =>
+                setSettings({ ...settings, filterType: type })
+              }
+              onHighpassFrequencyChange={(frequency) =>
+                setSettings({ ...settings, highpassFrequency: frequency })
+              }
+              onLowpassFrequencyChange={(frequency) =>
+                setSettings({ ...settings, lowpassFrequency: frequency })
+              }
             />
           </>
         )}
