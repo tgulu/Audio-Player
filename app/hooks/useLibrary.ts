@@ -61,6 +61,7 @@ export function useLibrary() {
     }
   }, []);
 
+  // Handle file rename
   const handleRename = useCallback(async (fileId: string, newName: string) => {
     try {
       const response = await fetch("/api/user-data", {
@@ -88,6 +89,11 @@ export function useLibrary() {
     setEditingName(file.name);
   }, []);
 
+  // Cancel editing
+  const cancelEditing = useCallback(() => {
+    setEditingId(null);
+  }, []);
+
   return {
     files,
     isLoading,
@@ -99,5 +105,6 @@ export function useLibrary() {
     editingId,
     editingName,
     startEditing,
+    cancelEditing,
   };
 }
