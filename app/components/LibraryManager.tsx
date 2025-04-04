@@ -1,128 +1,30 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { AudioFile, loadUserLibrary } from "../storage/user-data";
-import Link from "next/link";
 import styles from "../page.module.css";
-import { FilePicker } from "./FilePicker";
+import { useLibrary } from "../hooks/useLibrary";
+import { UploadSection } from "./UploadSection";
 
-export default function LibraryPage() {
-  const [files, setFiles] = useState<AudioFile[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingName, setEditingName] = useState("");
-  const [uploadStatus, setUploadStatus] = useState<string>("");
-
-  // Load library on mount
-  useEffect(() => {
-    loadUserLibrary()
-      .then((data) => {
-        setFiles(data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Failed to load library:", error);
-        setIsLoading(false);
-      });
-  }, []);
-
-  // Handle file deletion
-  const handleDelete = useCallback(async (fileId: string) => {
-    try {
-      const response = await fetch("/api/user-data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ operation: "delete", fileId }),
-      });
-
-      if (!response.ok) throw new Error("Delete failed");
-
-      const data = await response.json();
-      setFiles(data.library || []);
-    } catch (error) {
-      console.error("Delete error:", error);
-    }
-  }, []);
-
-  // Handle file upload
-  const handleFileSelect = useCallback(async (file: File) => {
-    setUploadStatus("Uploading...");
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("/api/user-data", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Upload failed");
-
-      const data = await response.json();
-      setFiles(data.library || []);
-      setUploadStatus("Upload complete!");
-      setTimeout(() => setUploadStatus(""), 2000);
-    } catch (error) {
-      console.error("Upload error:", error);
-      setUploadStatus("Upload failed");
-      setTimeout(() => setUploadStatus(""), 2000);
-    }
-  }, []);
-
-  // Handle file rename
-  const handleRename = useCallback(
-    async (fileId: string) => {
-      if (!editingName.trim()) {
-        setEditingId(null);
-        return;
-      }
-
-      try {
-        const response = await fetch("/api/user-data", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            operation: "rename",
-            fileId,
-            newName: editingName.trim(),
-          }),
-        });
-
-        if (!response.ok) throw new Error("Rename failed");
-
-        const data = await response.json();
-        setFiles(data.library || []);
-        setEditingId(null);
-      } catch (error) {
-        console.error("Rename error:", error);
-      }
-    },
-    [editingName]
-  );
-
-  // Start editing a file name
-  const startEditing = useCallback((file: AudioFile) => {
-    setEditingId(file.id);
-    setEditingName(file.name);
-  }, []);
+export default function LibraryManager() {
+  const {
+    files,
+    isLoading,
+    uploadStatus,
+    handleDelete,
+    handleFileSelect,
+    handleRename,
+    editingId,
+    editingName,
+    startEditing,
+  } = useLibrary();
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Audio Library</h1>
-            <Link href="/">Back to Player</Link>
-          </div>
-          <div className="mb-8">
-            <FilePicker onFileSelect={handleFileSelect} />
-            <span>Upload Audio File</span>
-            {uploadStatus && (
-              <p className="mt-2 text-center text-sm text-white">
-                {uploadStatus}
-              </p>
-            )}
-          </div>
+          <UploadSection
+            onFileSelect={handleFileSelect}
+            uploadStatus={uploadStatus}
+          />
         </div>
       </main>
     </div>
