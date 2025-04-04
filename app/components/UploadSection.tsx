@@ -1,18 +1,32 @@
-import { FilePicker } from "./FilePicker";
+"use client";
 
-interface Props {
+import { FC } from "react";
+import { FilePicker } from "./FilePicker";
+import styles from "../page.module.css";
+
+type UploadSectionProps = {
   onFileSelect: (file: File) => void;
   uploadStatus: string;
-}
+  // isUploading?: boolean;
+};
 
-export function UploadSection({ onFileSelect, uploadStatus }: Props) {
+export const UploadSection: FC<UploadSectionProps> = ({
+  onFileSelect,
+  uploadStatus,
+  // isUploading = false,
+}) => {
   return (
-    <div className="mb-8">
-      <FilePicker onFileSelect={onFileSelect} />
-      <span>Upload Audio File</span>
+    <>
+      <div className={styles.ctas}>
+        <div className={styles.primary}>
+          <FilePicker onFileSelect={onFileSelect} />
+          {uploadStatus !== "Uploading..." && <span>Upload Audio File</span>}
+        </div>
+      </div>
+
       {uploadStatus && (
-        <p className="mt-2 text-center text-sm text-white">{uploadStatus}</p>
+        <p className="text-center text-gray-600">{uploadStatus}</p>
       )}
-    </div>
+    </>
   );
-}
+};
