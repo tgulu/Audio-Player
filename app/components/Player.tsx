@@ -25,7 +25,7 @@ export const Player: FC = () => {
         setAudioBuffer(buffer);
       }
     },
-    [context],
+    [context]
   );
 
   if (!context) {
