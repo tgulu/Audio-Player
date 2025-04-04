@@ -23,9 +23,6 @@ export default function Slider({
 }: SliderProps) {
   return (
     <div>
-      <label style={{ marginRight: "20px" }} htmlFor={`slider-${label}`}>
-        {label}: {value}&nbsp;Hz
-      </label>
       <input
         id={`slider-${label}`}
         type="range"
@@ -36,6 +33,9 @@ export default function Slider({
         onChange={(e) => onChange(Number(e.target.value))}
         disabled={disabled}
       />
+      <label style={{ marginLeft: "20px" }} htmlFor={`slider-${label}`}>
+        {label}: {value}&nbsp;Hz
+      </label>
     </div>
   );
 }
