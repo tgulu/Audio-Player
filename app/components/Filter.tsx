@@ -42,10 +42,11 @@ export default function Filter({
 
   return (
     <div>
-      <button onClick={() => onFilterChange("none")}>None</button>
-      <button onClick={() => onFilterChange("highpass")}>High Pass</button>
-      <button onClick={() => onFilterChange("lowpass")}>Low Pass</button>
-
+      <div style={{ marginBottom: "10px" }}>
+        <button onClick={() => onFilterChange("none")}>None</button>
+        <button onClick={() => onFilterChange("highpass")}>High Pass</button>
+        <button onClick={() => onFilterChange("lowpass")}>Low Pass</button>
+      </div>
       <Slider
         label="High Pass"
         value={highPassValue}
