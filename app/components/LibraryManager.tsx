@@ -4,6 +4,7 @@ import styles from "../page.module.css";
 import { useLibrary } from "../hooks/useLibrary";
 import { UploadSection } from "./UploadSection";
 import { FileList } from "./FileList";
+import Link from "next/link";
 export default function LibraryManager() {
   const {
     files,
@@ -22,26 +23,31 @@ export default function LibraryManager() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <div className="max-w-4xl mx-auto">
-          {/* <div>
+        <div>
+          <div>
             <Link href="/" className={styles.primary}>
               Back to Player
             </Link>
-          </div> */}
+          </div>
 
           <UploadSection
             onFileSelect={handleFileSelect}
             uploadStatus={uploadStatus}
           />
-          <FileList
-            files={files}
-            editingId={editingId}
-            editingName={editingName}
-            onEditNameChange={setEditingName}
-            onCancelEdit={cancelEditing}
-            onStartEditing={startEditing}
-            onDelete={handleDelete}
-          />
+          {isLoading ? (
+            <p>Loading library...</p>
+          ) : (
+            <FileList
+              files={files}
+              editingId={editingId}
+              editingName={editingName}
+              onEditNameChange={setEditingName}
+              onCancelEdit={cancelEditing}
+              onStartEditing={startEditing}
+              onDelete={handleDelete}
+              onRename={handleRename}
+            />
+          )}
         </div>
       </main>
     </div>
