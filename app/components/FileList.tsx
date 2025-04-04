@@ -4,6 +4,7 @@ import { FC } from "react";
 import { AudioFile } from "../storage/user-data";
 import styles from "../page.module.css";
 
+// Props type for the FileList component
 type FileListProps = {
   files: AudioFile[];
   editingId: string | null;
@@ -15,6 +16,7 @@ type FileListProps = {
   onDelete: (fileId: string) => void;
 };
 
+// Renders a list of audio files with support for renaming and deleting
 export const FileList: FC<FileListProps> = ({
   files,
   editingId,
@@ -25,15 +27,18 @@ export const FileList: FC<FileListProps> = ({
   onStartEditing,
   onDelete,
 }) => {
+  // If there are no files to show, display a fallback message
   if (files.length === 0) {
     return <p className="text-center text-gray-600">No files in library</p>;
   }
+
   return (
     <ul>
       {files.map((file) => (
         <li key={file.id}>
           <div>
             {editingId === file.id ? (
+              // Input field shown when editing this file's name
               <input
                 type="text"
                 value={editingName}
@@ -45,6 +50,7 @@ export const FileList: FC<FileListProps> = ({
                 autoFocus
               />
             ) : (
+              // Display file name and size when not editing
               <div>
                 <span>{file.name}</span>
                 {(file.size / 1024 / 1024).toFixed(2)} MB
@@ -54,6 +60,7 @@ export const FileList: FC<FileListProps> = ({
 
           <div>
             {editingId === file.id ? (
+              // Show Save/Cancel buttons during editing
               <>
                 <button
                   onClick={() => onRename(file.id, editingName)}
@@ -67,6 +74,7 @@ export const FileList: FC<FileListProps> = ({
                 </button>
               </>
             ) : (
+              // Show Rename/Delete buttons when not editing
               <>
                 <button
                   onClick={() => onStartEditing(file)}
