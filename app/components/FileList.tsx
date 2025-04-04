@@ -44,7 +44,10 @@ export const FileList: FC<FileListProps> = ({
                 value={editingName}
                 onChange={(e) => onEditNameChange(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") onRename(file.id, editingName);
+                  if (e.key === "Enter") {
+                    onRename(file.id, editingName); // Save the new name
+                    onCancelEdit(); // Reset editing state
+                  }
                   if (e.key === "Escape") onCancelEdit();
                 }}
                 autoFocus
@@ -52,7 +55,7 @@ export const FileList: FC<FileListProps> = ({
             ) : (
               // Display file name and size when not editing
               <div>
-                <span>{file.name}</span>
+                <span>{file.name} &nbsp;</span>
                 {(file.size / 1024 / 1024).toFixed(2)} MB
               </div>
             )}
@@ -63,8 +66,10 @@ export const FileList: FC<FileListProps> = ({
               // Show Save/Cancel buttons during editing
               <>
                 <button
-                  onClick={() => onRename(file.id, editingName)}
-                  className={styles.primary}
+                  onClick={() => {
+                    onRename(file.id, editingName); // Save the new name
+                    onCancelEdit(); // Reset editing state
+                  }}
                 >
                   Save
                 </button>
