@@ -1,0 +1,579 @@
+/* Spotify-inspired Player Page Styles */
+
+.playerContainer {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #121212 0%, #1e1e1e 100%);
+  color: #ffffff;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.header {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.pageTitle {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(45deg, #1db954, #1ed760);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mainContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.fileUploadSection {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  border: 2px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.fileUploadSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(29, 185, 84, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.fileUploadSection:hover::before {
+  left: 100%;
+}
+
+.fileUploadSection:hover {
+  border-color: #1db954;
+  background: rgba(29, 185, 84, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.uploadButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.uploadButton::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.3s ease,
+    height 0.3s ease;
+}
+
+.uploadButton:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.uploadButton:hover {
+  background: #1ed760;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(29, 185, 84, 0.3);
+}
+
+.noFileMessage {
+  text-align: center;
+  padding: 64px 32px;
+  color: #b3b3b3;
+  animation: fadeIn 0.5s ease;
+}
+
+.noFileIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.noFileTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.noFileText {
+  font-size: 16px;
+  margin: 0 0 24px 0;
+}
+
+.currentFileInfo {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+.fileIcon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #1db954, #1ed760);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 8px rgba(29, 185, 84, 0.3);
+}
+
+.fileDetails {
+  flex: 1;
+}
+
+.fileName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+}
+
+.fileMeta {
+  font-size: 14px;
+  color: #b3b3b3;
+  margin: 0;
+}
+
+.playerControls {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.controlButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.controlButton::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.2s ease,
+    height 0.2s ease;
+}
+
+.controlButton:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.controlButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.controlButton.primary {
+  background: #1db954;
+}
+
+.controlButton.primary:hover {
+  background: #1ed760;
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.controlButton.secondary {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.controlButton.secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.playbackBar {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Playback Bar Styles */
+.playbackBarWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.playbackMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playbackTime {
+  font-size: 14px;
+  font-weight: 600;
+  color: #b3b3b3;
+  font-family: "Courier New", monospace;
+}
+
+.playbackBarTrack {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.playbackBarTrack:hover {
+  background: rgba(255, 255, 255, 0.15);
+  height: 8px;
+}
+
+.playbackProgress {
+  height: 100%;
+  background: linear-gradient(90deg, #1db954, #1ed760);
+  border-radius: 3px;
+  transition: width 0.1s ease;
+  position: relative;
+}
+
+.playbackProgress::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.playbackBarTrack:hover .playbackProgress::after {
+  opacity: 1;
+}
+
+/* Speed Dropdown Styles */
+.speedDropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.speedLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #b3b3b3;
+  margin: 0;
+}
+
+.speedSelect {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.speedSelect:focus {
+  outline: none;
+  border-color: #1db954;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+.speedSelect option {
+  background: #282828;
+  color: #ffffff;
+}
+
+/* Filter Styles */
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  min-width: 200px;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filterButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.filterButton.active {
+  background: #1db954;
+}
+
+.filterButton.active:hover {
+  background: #1ed760;
+}
+
+.filterLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #b3b3b3;
+  margin: 0;
+  text-align: center;
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 200px;
+}
+
+.sliderLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b3b3b3;
+  margin: 0;
+  text-align: center;
+}
+
+.slider {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #1db954;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: #1ed760;
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #1db954;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  background: #1ed760;
+  transform: scale(1.1);
+}
+
+.slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slider:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+}
+
+.slider:disabled::-moz-range-thumb {
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .mainContent {
+    padding: 16px;
+  }
+
+  .playerControls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .controlButton {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .filterContainer {
+    min-width: 100%;
+  }
+
+  .filterButtons {
+    width: 100%;
+  }
+
+  .filterButton {
+    flex: 1;
+    min-width: 80px;
+  }
+}

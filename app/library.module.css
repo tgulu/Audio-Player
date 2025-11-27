@@ -1,0 +1,446 @@
+/* Spotify-inspired Library Page Styles */
+
+.libraryContainer {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #121212 0%, #1e1e1e 100%);
+  color: #ffffff;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.header {
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.pageTitle {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(45deg, #1db954, #1ed760);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.uploadSection {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.uploadSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(29, 185, 84, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.uploadSection:hover::before {
+  left: 100%;
+}
+
+.uploadSection:hover {
+  border-color: #1db954;
+  background: rgba(29, 185, 84, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.uploadButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.uploadButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(29, 185, 84, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.uploadButton:hover::before {
+  left: 100%;
+}
+
+.uploadButton:hover {
+  background: #1ed760;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(29, 185, 84, 0.3);
+}
+
+.uploadStatus {
+  color: #b3b3b3;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.fileList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fileItem {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.fileItem::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, #1db954, #1ed760);
+  transform: scaleY(0);
+  transition: transform 0.8s ease;
+}
+
+.fileItem:hover::before {
+  transform: scaleY(1);
+}
+
+.fileItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.fileContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.fileIcon {
+  width: 48px;
+  height: 48px;
+  /* background: linear-gradient(135deg, #1db954, #1ed760); */
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #ffffff;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 8px rgba(29, 185, 84, 0.3);
+}
+/* 
+.fileItem:hover .fileIcon {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(29, 185, 84, 0.4);
+} */
+
+.fileDetails {
+  flex: 1;
+}
+
+.fileName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  transition: color 0.2s ease;
+}
+
+.fileItem:hover .fileName {
+  color: #1db954;
+}
+
+.fileMeta {
+  font-size: 14px;
+  color: #b3b3b3;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.fileItem:hover .fileMeta {
+  color: #ffffff;
+}
+
+.fileActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.actionButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.actionButton::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.2s ease,
+    height 0.2s ease;
+}
+
+.actionButton:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.actionButtonPrimary {
+  background: #1db954;
+}
+
+.actionButtonPrimary:hover {
+  background: #1ed760;
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.actionButtonDanger {
+  background: #e91429;
+}
+
+.actionButtonDanger:hover {
+  background: #f44336;
+  box-shadow: 0 4px 12px rgba(233, 20, 41, 0.3);
+}
+
+.editInput {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #1db954;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+  max-width: 300px;
+  transition: all 0.2s ease;
+}
+
+.editInput:focus {
+  outline: none;
+  border-color: #1ed760;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.2);
+}
+
+.editInput::placeholder {
+  color: #b3b3b3;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 64px 32px;
+  color: #b3b3b3;
+  animation: fadeIn 0.5s ease;
+}
+
+.emptyStateIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  /* animation: float 3s ease-in-out infinite; */
+  opacity: 0.5;
+}
+
+.emptyStateTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.emptyStateText {
+  font-size: 16px;
+  margin: 0;
+}
+
+.loadingState {
+  text-align: center;
+  padding: 64px 32px;
+  color: #b3b3b3;
+  animation: fadeIn 0.3s ease;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #1db954;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .mainContent {
+    padding: 16px;
+  }
+
+  .fileContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .fileActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

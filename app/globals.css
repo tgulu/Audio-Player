@@ -1,0 +1,76 @@
+:root {
+  --background: #121212;
+  --foreground: #ffffff;
+
+  --gray-rgb: 255, 255, 255;
+  --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
+  --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
+
+  --button-primary-hover: #1ed760;
+  --button-secondary-hover: #282828;
+
+  /* Spotify colors */
+  --spotify-green: #1db954;
+  --spotify-green-hover: #1ed760;
+  --spotify-red: #e91429;
+  --spotify-red-hover: #f44336;
+  --spotify-gray: #b3b3b3;
+  --spotify-dark-gray: #282828;
+  --spotify-darker-gray: #181818;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+
+    --gray-rgb: 0, 0, 0;
+    --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
+    --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+
+    --button-primary-hover: #1ed760;
+    --button-secondary-hover: #f2f2f2;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
