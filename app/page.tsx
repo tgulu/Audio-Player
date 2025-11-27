@@ -10,9 +10,9 @@ export default function Home() {
           <Link href={"/player"} className={styles.primary}>
             Audio Player
           </Link>
-          <Link href={"/library"} className={styles.secondary}>
+          {/* <Link href={"/library"} className={styles.secondary}>
             Library
-          </Link>
+          </Link> */}
         </div>
       </main>
     </div>
