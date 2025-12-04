@@ -63,9 +63,9 @@ export const Player: FC = () => {
     <div className={styles.playerContainer}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <Link href="/" className={styles.backButton}>
+          {/* <Link href="/" className={styles.backButton}>
             ← Back to Home
-          </Link>
+          </Link> */}
           <h1 className={styles.pageTitle}>Audio Player</h1>
         </div>
       </header>

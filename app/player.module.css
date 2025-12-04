@@ -16,6 +16,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 20px 32px;
   position: sticky;
+
   top: 0;
   z-index: 100;
 }
@@ -23,8 +24,9 @@
 .headerContent {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   max-width: 1200px;
+
   margin: 0 auto;
 }
 
@@ -52,7 +54,8 @@
 
 .pageTitle {
   font-size: 32px;
-  font-weight: 700;
+
+  font-weight: 800;
   margin: 0;
   background: linear-gradient(45deg, #1db954, #1ed760);
   -webkit-background-clip: text;
@@ -543,7 +546,8 @@
   .headerContent {
     flex-direction: column;
     gap: 16px;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
   }
 
   .pageTitle {
