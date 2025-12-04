@@ -2,14 +2,7 @@
 
 Sleek music player web application for uploading, managing, and playing audio files with advanced audio processing capabilities. Built with Next.js and the Web Audio API.
 
-## 🎵 Features
-
-### **Audio Library Management**
-
-- Upload and store audio files permanently
-- Rename and delete files from your personal library
-- View file metadata (size, upload date)
-- Persistent storage across sessions
+## Features
 
 ### **Advanced Audio Player**
 
@@ -30,41 +23,13 @@ Sleek music player web application for uploading, managing, and playing audio fi
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - npm or yarn package manager
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd audio-studio
-
-# Install dependencies
-npm install
-
-# Run the development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-### Deployment Notes
-
-**Netlify Deployment:**
-
-- File uploads work locally but have limitations on Netlify
-- Netlify serverless functions have read-only filesystem access
-- For production, consider using cloud storage services like:
-  - AWS S3 for file storage
-  - Cloudinary for media management
-  - Supabase for database and file storage
 
 **Local Development:**
 
 - Full file upload functionality available
 - Files stored in `data/` directory
-- All features work as expected
 
 ## 🏗️ Architecture
 
@@ -130,15 +95,6 @@ filter.connect(context.destination);
 
 ### **File Storage (`app/storage/files.ts`)**
 
-Handles binary file storage and retrieval:
-
-- Store audio files as byte streams
-- Read files as readable streams
-- Automatic directory management
-- File deduplication
-
-### **User Data (`app/storage/user-data.ts`)**
-
 Persistent user data with type safety:
 
 - Audio playback settings
@@ -159,44 +115,6 @@ const USER_DATA = z.object({
 });
 ```
 
-## Design System
-
-### **Color Palette**
-
-- **Primary Green**: `#1db954` (Spotify-inspired)
-- **Background**: `#121212` to `#1e1e1e` gradient
-- **Text**: `#ffffff` with `#b3b3b3` for secondary text
-
-### **Components**
-
-- **Cards**: Rounded corners with subtle shadows
-- **Buttons**: Gradient backgrounds with hover effects
-- **Icons**: Music-themed emojis (🎛️, 🎧)
-- **Animations**: Smooth transitions and micro-interactions
-
-## Pages
-
-### **Home (`/`)**
-
-- Navigation to Audio Player and Library
-- Clean, minimal landing page
-
-### **Audio Player (`/player`)**
-
-- File upload and playback interface
-- Real-time audio controls
-- Progress bar with time display
-- Settings persistence
-
-### **Library (`/library`)**
-
-- File management interface
-- Upload, rename, and delete files
-- File metadata display
-- Empty state handling
-
-## Technical Implementation
-
 ### **Audio Context Management**
 
 ```typescript
@@ -208,43 +126,6 @@ const gain = context.createGain();
 
 // Audio routing
 source → filter → gain → destination
-```
-
-### **State Management**
-
-- React hooks for local state
-- Custom hooks for audio processing
-- Persistent storage for user preferences
-- Real-time audio parameter updates
-
-### **Performance Optimizations**
-
-- Debounced settings saves
-- Efficient audio buffer handling
-- Optimized re-renders
-- Memory leak prevention
-
-## Development
-
-### **Scripts**
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-```
-
-### **File Structure**
-
-```
-app/
-├── components/      # React components
-├── storage/         # Backend APIs
-├── hooks/           # Custom React hooks
-├── library/         # Library page
-├── player/          # Player page
-└── globals.css      # Global styles
 ```
 
 ## Future Enhancements

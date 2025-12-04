@@ -3,8 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 /*
  * This module exposes some functions to handle authentication.
  *
- * The decisions made here don't reflect good security practices,
- * but are good enough for the purpose of this challenge.
+ * For this example, we'll use a very simple token-based authentication.
  */
 
 /**
@@ -14,7 +13,6 @@ import { v4 as uuidv4 } from "uuid";
 export const generateTokenForNewUser = () => {
   // Note, UUIDs don't have enough entropy to be used as a secure token.
   // In a real application, you would use a secure random generator.
-  // But for this challenge, it's good enough.
   return uuidv4();
 };
 
