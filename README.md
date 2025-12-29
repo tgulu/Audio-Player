@@ -6,20 +6,30 @@ Sleek music player web application for uploading, managing, and playing audio fi
 URL: https://greenhouseprojects.space/
 <img width="2560" height="940" alt="image" src="https://github.com/user-attachments/assets/e89ba260-472b-4e1e-9069-4b56870d30e1" />
 
-### Technologies Used:
+### **Technologies Used**:
 
-## **Frontend**
+## Frontend
 
 - **Next.js 14** - React framework with App Router
 - **TypeScript** - Type-safe development
 - **CSS Modules** - Scoped styling
 - **Web Audio API** - Real-time audio processing
 
-## **Backend APIs**
+## Backend APIs
 
 - **File Storage API** - Server-side file management
 - **User Data API** - Persistent user settings and library
 - **Audio Processing** - Real-time audio manipulation
+
+
+## Modern UI/UX
+
+- Spotify-inspired dark theme design
+- Smooth animations and hover effects
+- Responsive design for all devices
+- Intuitive file management interface
+
+
 
 ## Features
 
@@ -33,12 +43,7 @@ URL: https://greenhouseprojects.space/
 ### **BiquadFilterNode**
 - Advanced audio filtering for professional sound processing:
 
-### **Modern UI/UX**
 
-- Spotify-inspired dark theme design
-- Smooth animations and hover effects
-- Responsive design for all devices
-- Intuitive file management interface
 
 
 
