@@ -3,7 +3,7 @@
 Sleek music player web application for uploading, managing, and playing audio files with advanced audio processing capabilities. Built with Next.js and the Web Audio API. Playback Rate Control: Adjust speed without affecting audio quality
 
 ## Website
-URL: https://greenhouseprojects.space/
+URL: https://audio-player-seven-iota.vercel.app/
 <img width="2560" height="940" alt="image" src="https://github.com/user-attachments/assets/e89ba260-472b-4e1e-9069-4b56870d30e1" />
 
 ### **Technologies Used**:
